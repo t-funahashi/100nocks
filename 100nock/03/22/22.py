@@ -10,7 +10,8 @@ if __name__ == '__main__':
     if os.path.exists(full_path):
         with gzip.open(full_path,mode ='rb') as f:
             file_con = f.read().decode()
-            decoder = json.JSONDecoder()
+
+        decoder = json.JSONDecoder()
 
         WS = re.compile(r'[ \t\n\r]*', re.MULTILINE|re.VERBOSE|re.DOTALL)
 
@@ -30,11 +31,10 @@ if __name__ == '__main__':
                     break
 
         # What is categories?
-        c = re.compile(r' = ')
+        c = re.compile(r'\|.* = ')
         Text = Text.split('\n')
         for t in Text:
-            if ' = ' in t:
-                a = c.search(t)
-                if a is not None:
-                    s,e = a.span()
-                    print(t[1:s])
+            a = c.search(t)
+            if a is not None:
+                s,e = a.span()
+                print(t[s+1:e-3])

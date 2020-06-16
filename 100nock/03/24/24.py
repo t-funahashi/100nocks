@@ -3,27 +3,6 @@ import os
 import re
 import json
 
-from json.decoder import WHITESPACE
-
-# ref = https://pod.hatenablog.com/entry/2017/08/31/035140
-def loads_iter(s):
-    size = len(s)
-    decoder = json.JSONDecoder()
-
-    end = 0
-    while True:
-        # Where can I find out how to use WHITESPACE?
-        # https://github.com/python/cpython/blob/3.7/Lib/json/decoder.py
-        # Line 132
-        # Oh yeah, it was a regular expression question
-        # It's convenient, but I can't use it
-        idx = WHITESPACE.match(s[end:]).end()
-        i = end + idx
-        if i >= size:
-            break
-        ob, end = decoder.raw_decode(s, i)
-        yield ob
-
 if __name__ == '__main__':
     cpath = os.getcwd()
     file_path = '\\jawiki-country.json.gz'
@@ -48,7 +27,19 @@ if __name__ == '__main__':
 
             for v in text_obj.values():
                 if 'イギリス' == v:
-                    print(text_obj['text'])
-                    with open('03_20.text',mode='w',encoding="utf-8") as f:
-                        f.write(text_obj['text'])
+                    Text = text_obj['text']
                     break
+
+        # What is categories?
+        c = re.compile(r'.*\[ファイル.*\].*')
+        d = re.compile(r'\[ファイル.*\]')
+        Text = Text.split('\n')
+        for t in Text:
+            mtext = c.findall(t)
+            if len(mtext) >0:
+                for _text in mtext:
+                    ans = d.search(_text)
+                    if ans is not None:
+                        s,e = ans.span()
+                        _text = _text[s:e]
+                        print(_text)
